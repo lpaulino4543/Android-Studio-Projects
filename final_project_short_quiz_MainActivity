@@ -1,0 +1,97 @@
+package com.example.finalproject;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+    //declare relevant objects
+    RadioGroup radioG1, radioG2, radioG3, radioG4;
+
+    //This helps us keep track of the user's correct answers
+    int score = 0;
+
+    //This boolean allows us to track the questions that were answered
+    boolean[] answered;
+
+    //This will display the users score after the quiz is taken
+    TextView scoreTV;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        //define objects
+        radioG1 = findViewById(R.id.radioG1);
+        radioG2 = findViewById(R.id.radioG2);
+        radioG3 = findViewById(R.id.radioG3);
+        radioG4 = findViewById(R.id.radioG4);
+
+        scoreTV = findViewById(R.id.scoreTextView);
+
+        //initialize answer tracker
+        answered = new boolean[4];
+
+        // Set listeners for each question
+        setRadioGroupListener(radioG1, 0, R.id.correctA1);
+        setRadioGroupListener(radioG2, 1, R.id.correctA2);
+        setRadioGroupListener(radioG3, 2, R.id.correctA3);
+        setRadioGroupListener(radioG4, 3, R.id.correctA4);
+    }
+
+    private void setRadioGroupListener(RadioGroup group, int questionIndex, int correctOptionId) {
+        group.setOnCheckedChangeListener((radioGroup, checkedId) -> {
+            // Update the score for the current question
+            if (!answered[questionIndex]) {
+                answered[questionIndex] = true; // Mark the question as answered
+                if (checkedId == correctOptionId) {
+                    score += 25; // Add points for a correct answer
+                }
+                else{
+                    score += 0;
+                }
+            }
+
+            // Check if all questions are answered
+            if (allQuestionsAnswered()) {
+                displayScore();
+            }
+        });
+    }
+
+    private boolean allQuestionsAnswered() {
+        // Check if all questions have been answered
+        for (boolean isAnswered : answered) {
+            if (!isAnswered) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void displayScore() {
+        //We will make textView visible before we update the final score
+
+        scoreTV.setVisibility(View.VISIBLE);
+
+        //update the TV with the score
+        scoreTV.setText("Your score is: " + score + "/100");
+
+    }
+}
+
+
+
+
